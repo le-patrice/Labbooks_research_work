@@ -1,0 +1,743 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Literary Evolution: A Linguistic Journey</title>
+		<!-- Tailwind CSS CDN for a modern, utility-first styling approach -->
+		<script src="https://cdn.tailwindcss.com"></script>
+		<!-- Google Fonts - Inter for a clean, professional typography -->
+		<link
+			href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap"
+			rel="stylesheet"
+		/>
+		<style>
+			/* Base styles */
+			body {
+				font-family: "Inter", sans-serif;
+				margin: 0;
+				padding: 0;
+			}
+
+			/* Custom Scrollbar for content overflow - modern, light theme friendly */
+			.custom-scrollbar::-webkit-scrollbar {
+				width: 8px; /* Thinner scrollbar */
+			}
+			.custom-scrollbar::-webkit-scrollbar-track {
+				background: #f1f5f9; /* Tailwind gray-100 for track */
+				border-radius: 4px;
+			}
+			.custom-scrollbar::-webkit-scrollbar-thumb {
+				background: #22d3ee; /* Tailwind cyan-400 for thumb */
+				border-radius: 4px;
+			}
+			.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+				background: #06b6d4; /* Darker cyan on hover */
+			}
+			.custom-scrollbar {
+				overflow-y: auto;
+				scrollbar-width: thin; /* Firefox */
+				scrollbar-color: #22d3ee #f1f5f9; /* Firefox: thumb color track color */
+			}
+
+			/* Slide transition effects */
+			.slide-item {
+				position: absolute;
+				top: 0;
+				left: 0;
+				width: 100%;
+				height: 100%;
+				transition: transform 0.7s ease-in-out, opacity 0.7s ease-in-out;
+				transform: translateX(100%); /* Start off-screen to the right */
+				opacity: 0;
+				display: flex; /* Ensure content is centered vertically */
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				padding: 2rem;
+				box-sizing: border-box; /* Include padding in element's total width and height */
+				/* Add background for slides to prevent transparency issues during transition */
+				background-color: #ffffff;
+			}
+
+			.slide-item.active {
+				transform: translateX(0);
+				opacity: 1;
+				z-index: 10; /* Bring active slide to front */
+			}
+
+			.slide-item.previous {
+				transform: translateX(-100%); /* Move off-screen to the left */
+				opacity: 0;
+			}
+
+			/* Image sizing for presentation slides */
+			.slide-image {
+				max-width: 90%; /* Adjust as needed */
+				max-height: 50vh; /* Limit height to fit on slide, adjust as needed */
+				width: auto;
+				height: auto;
+				object-fit: contain; /* Ensure entire image is visible and scaled properly */
+				box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+				border-radius: 12px;
+				background-color: #f8fafc; /* Very light background for images */
+				padding: 10px; /* Some padding around the image */
+			}
+
+			/* Enhancements for text within slides */
+			.slide-content h3 {
+				font-size: 1.875rem; /* text-3xl */
+				font-weight: 700; /* font-bold */
+				color: #4338ca; /* indigo-700 */
+				margin-bottom: 1rem;
+			}
+			.slide-content ul li {
+				margin-bottom: 0.5rem;
+				font-size: 1.125rem; /* text-lg */
+				color: #334155; /* slate-700 */
+			}
+			.slide-content p {
+				font-size: 1.125rem; /* text-lg */
+				color: #334155; /* slate-700 */
+			}
+			.slide-content .highlight-positive {
+				color: #10b981; /* emerald-500 */
+				font-weight: 600;
+			}
+			.slide-content .highlight-negative {
+				color: #ef4444; /* red-500 */
+				font-weight: 600;
+			}
+			.slide-content .highlight-stable {
+				color: #f59e0b; /* amber-500 */
+				font-weight: 600;
+			}
+		</style>
+	</head>
+	<body class="min-h-screen bg-gray-50 text-gray-900 flex flex-col">
+		<!-- Header: Clean, minimalist, and functional -->
+		<header
+			class="p-4 bg-white shadow-lg flex justify-between items-center z-20"
+		>
+			<h1 class="text-3xl font-extrabold text-indigo-700">Literary Insights</h1>
+			<!-- Added a span for the dynamic slide title -->
+			<span
+				id="slide-title"
+				class="text-xl font-semibold text-gray-700 hidden md:block"
+			></span>
+			<div class="flex items-center space-x-4">
+				<span id="slide-counter" class="text-lg text-gray-600 font-medium"
+					>Slide 1 of 9</span
+				>
+				<button
+					id="prev-slide-btn"
+					class="px-5 py-2 bg-gray-200 text-gray-800 rounded-xl shadow-md hover:bg-gray-300 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+				>
+					Previous
+				</button>
+				<button
+					id="next-slide-btn"
+					class="px-5 py-2 bg-teal-500 text-white rounded-xl shadow-md hover:bg-teal-600 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed transform hover:scale-105"
+				>
+					Next
+				</button>
+			</div>
+		</header>
+
+		<!-- Main Presentation Container: Holds all slides -->
+		<main
+			class="flex-1 flex flex-col items-center justify-center p-8 relative overflow-hidden"
+		>
+			<div
+				id="presentation-frame"
+				class="relative w-full max-w-5xl h-[80vh] bg-white rounded-2xl shadow-xl overflow-hidden flex items-center justify-center"
+			>
+				<!-- Slide 0: Introduction -->
+				<div id="slide-0" class="slide-item active">
+					<div class="slide-content text-center max-w-2xl">
+						<h2 class="text-5xl font-extrabold text-teal-600 mb-8">
+							Literary Evolution: A Linguistic Journey
+						</h2>
+						<p class="mb-4 text-xl">
+							This presentation delves into a deep linguistic analysis of
+							selected literary works spanning from the 19th to the 21st
+							century.
+						</p>
+						<p class="mb-6 text-xl">
+							We explore the evolution of word usage, emotional expression,
+							grammatical structures, and cultural discourse over time.
+						</p>
+						<p class="font-bold text-indigo-500 text-3xl mt-10 tracking-wide">
+							A State-of-the-Art Study Across Eras and Cultural Shifts
+						</p>
+					</div>
+				</div>
+
+				<!-- Slide 1: Corpus Overview -->
+				<div id="slide-1" class="slide-item">
+					<div class="slide-content text-left w-full max-w-md mx-auto">
+						<h3 class="mb-4">Corpus Overview:</h3>
+						<ul class="list-disc list-inside space-y-3 text-lg">
+							<li>
+								Total texts analyzed:
+								<span class="font-bold text-indigo-600">5</span>
+							</li>
+							<li>
+								Time span:
+								<span class="font-bold text-indigo-600">1853-2014</span> (<span
+									class="font-bold"
+									>161 years</span
+								>)
+							</li>
+							<li>
+								Average words per text:
+								<span class="font-bold text-indigo-600">7322.0</span>
+							</li>
+							<li class="mt-4">
+								Literary Works Included:
+								<ul class="list-none pl-4 text-sm text-gray-600">
+									<li>
+										-
+										<span class="font-semibold">Bartleby, The Scrivener</span>
+										(1853)
+									</li>
+									<li>
+										-
+										<span class="font-semibold">The Yellow Wallpaper</span>
+										(1892)
+									</li>
+									<li>- <span class="font-semibold">Passing</span> (1929)</li>
+									<li>
+										- <span class="font-semibold">A Small Place</span> (1988)
+									</li>
+									<li>
+										-
+										<span class="font-semibold"
+											>We Should All Be Feminists</span
+										>
+										(2014)
+									</li>
+								</ul>
+							</li>
+						</ul>
+						<p class="mt-8 italic text-gray-600">
+							Our selection provides a rich tapestry of literary styles and
+							societal contexts for comparative analysis.
+						</p>
+					</div>
+				</div>
+
+				<!-- Slide 2: Key Evolutionary Trends (Summary) -->
+				<div id="slide-2" class="slide-item">
+					<div class="slide-content text-left w-full max-w-md mx-auto">
+						<h3 class="mb-4">Key Evolutionary Trends:</h3>
+						<ul class="list-disc list-inside space-y-3 text-lg">
+							<li>
+								Lexical Diversity:
+								<span class="highlight-negative">↘️ Decreasing</span>
+								(Correlation: -0.060)
+								<p class="text-sm ml-4 text-gray-600">
+									(Shift towards less varied vocabulary or potentially shorter
+									text samples)
+								</p>
+							</li>
+							<li>
+								Readability (Flesch Reading Ease):
+								<span class="highlight-stable">↔️ Stable</span> (Correlation:
+								-0.048)
+							</li>
+							<li>
+								Complexity (Flesch-Kincaid Grade Level):
+								<span class="highlight-positive">↗️ More complex</span>
+								(Correlation: 0.181)
+								<p class="text-sm ml-4 text-gray-600">
+									(Despite stable readability, perceived academic complexity
+									slightly rises)
+								</p>
+							</li>
+							<li>
+								Average Sentence Length:
+								<span class="highlight-stable">↔️ Stable</span> (Correlation:
+								0.085)
+							</li>
+							<li>
+								Overall Sentiment (VADER Compound):
+								<span class="highlight-negative">↘️ More Negative</span>
+								(Correlation: -0.440)
+								<p class="text-sm ml-4 text-gray-600">
+									(A notable trend towards more critical and less optimistic
+									emotional tone)
+								</p>
+							</li>
+						</ul>
+					</div>
+				</div>
+
+				<!-- Slide 3: Semantic Field Evolution Visual -->
+				<div id="slide-3" class="slide-item">
+					<div
+						class="slide-content flex flex-col items-center justify-center w-full"
+					>
+						<p class="mb-6 text-center text-xl font-medium">
+							Analysis of word density across semantic fields reveals dynamic
+							shifts in thematic focus.
+						</p>
+						<!-- Image src updated to use getImageUrl function -->
+						<img
+							src=""
+							alt="Semantic Field Trends Over Time"
+							class="slide-image"
+							data-image-path="./visualization_output/semantic_field_trends.png"
+						/>
+						<div class="text-left mt-8 w-full max-w-md mx-auto text-base">
+							<h4 class="font-semibold text-indigo-600 mb-2">
+								Key Semantic Trends (Correlation with Year):
+							</h4>
+							<ul class="list-disc list-inside">
+								<li>
+									Authority terms:
+									<span class="highlight-positive">↗️ Rising</span> (0.491)
+								</li>
+								<li>
+									Identity terms:
+									<span class="highlight-positive">↗️ Rising</span> (0.756)
+								</li>
+								<li>
+									Emotion terms:
+									<span class="highlight-positive">↗️ Rising</span> (0.723)
+								</li>
+								<li>
+									Social terms:
+									<span class="highlight-positive">↗️ Rising</span> (0.878)
+								</li>
+								<li>
+									Confinement terms:
+									<span class="highlight-stable">↔️ Stable</span> (0.060)
+								</li>
+								<li>
+									Progress terms:
+									<span class="highlight-stable">↔️ Stable</span> (-0.039)
+								</li>
+							</ul>
+							<p class="mt-4 italic text-gray-600">
+								The increasing focus on 'Identity', 'Social', and 'Emotion'
+								fields signifies a move towards more personal and socially
+								conscious narratives.
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Slide 4: Part-of-Speech Evolution Visual -->
+				<div id="slide-4" class="slide-item">
+					<div
+						class="slide-content flex flex-col items-center justify-center w-full"
+					>
+						<p class="mb-6 text-center text-xl font-medium">
+							Part-of-Speech ratios indicate changes in descriptive versus
+							action-oriented language.
+						</p>
+						<!-- Image src updated to use getImageUrl function -->
+						<img
+							src=""
+							alt="Part-of-Speech Tag Trends Over Time"
+							class="slide-image"
+							data-image-path="./visualization_output/pos_tag_trends.png"
+						/>
+						<div class="text-left mt-8 w-full max-w-md mx-auto text-base">
+							<h4 class="font-semibold text-indigo-600 mb-2">
+								Grammatical Structure Trends:
+							</h4>
+							<ul class="list-disc list-inside">
+								<li>
+									Noun Ratio:
+									<span class="highlight-positive">↗️ Increasing</span> (0.064
+									increase from earliest to latest text)
+								</li>
+								<li>
+									Verb Ratio: <span class="highlight-stable">↔️ Stable</span>
+								</li>
+								<li>
+									Adjective Ratio:
+									<span class="highlight-stable">↔️ Stable</span>
+								</li>
+								<li>
+									Adverb Ratio: <span class="highlight-stable">↔️ Stable</span>
+								</li>
+							</ul>
+							<p class="mt-4 italic text-gray-600">
+								The noticeable increase in noun usage suggests a greater
+								emphasis on subjects, concepts, and entities within the
+								narratives.
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Slide 5: Readability & Emotional Evolution Visual -->
+				<div id="slide-5" class="slide-item">
+					<div
+						class="slide-content flex flex-col items-center justify-center w-full"
+					>
+						<p class="mb-6 text-center text-xl font-medium">
+							An overview of readability metrics and the prevailing emotional
+							tone across the years.
+						</p>
+						<!-- Image src updated to use getImageUrl function -->
+						<img
+							src=""
+							alt="Linguistic Complexity and Emotional Sentiment Trends"
+							class="slide-image"
+							data-image-path="./visualization_output/complexity_sentiment_trends.png"
+						/>
+						<div class="text-left mt-8 w-full max-w-md mx-auto text-base">
+							<h4 class="font-semibold text-indigo-600 mb-2">
+								Readability & Complexity:
+							</h4>
+							<ul class="list-disc list-inside">
+								<li>
+									Flesch Reading Ease:
+									<span class="highlight-stable">↔️ Stable</span> (-0.048)
+								</li>
+								<li>
+									Flesch-Kincaid Grade Level:
+									<span class="highlight-positive">↗️ More complex</span>
+									(0.181)
+								</li>
+								<li>
+									Average Sentence Length:
+									<span class="highlight-stable">↔️ Stable</span> (0.085)
+								</li>
+							</ul>
+							<h4 class="font-semibold text-indigo-600 mb-2 mt-4">
+								Emotional Evolution (VADER Compound):
+							</h4>
+							<ul class="list-disc list-inside">
+								<li>
+									Overall Sentiment:
+									<span class="highlight-negative">↘️ More Negative</span>
+									(-0.440)
+								</li>
+							</ul>
+							<p class="mt-4 italic text-gray-600">
+								The significant decline in overall sentiment suggests a growing
+								criticality and engagement with challenging themes.
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Slide 6: Grammatical Structure & Narrative Voice Visual -->
+				<div id="slide-6" class="slide-item">
+					<div
+						class="slide-content flex flex-col items-center justify-center w-full"
+					>
+						<p class="mb-6 text-center text-xl font-medium">
+							Comparative analysis of word usage patterns and narrative
+							perspectives across different works.
+						</p>
+						<!-- Image src updated to use getImageUrl function -->
+						<img
+							src=""
+							alt="Comparative Analysis of Word Usage and Pronoun Ratios"
+							class="slide-image"
+							data-image-path="./visualization_output/comparative_analysis.png"
+						/>
+						<div class="text-left mt-8 w-full max-w-md mx-auto text-base">
+							<h4 class="font-semibold text-indigo-600 mb-2">
+								Narrative Perspective Evolution (Correlation with Year):
+							</h4>
+							<ul class="list-disc list-inside">
+								<li>
+									First Person Pronoun Ratio:
+									<span class="highlight-positive">↗️ Increasing</span> (0.906)
+								</li>
+								<li>
+									Second Person Pronoun Ratio:
+									<span class="highlight-stable">↔️ Stable</span> (nan)
+								</li>
+								<li>
+									Third Person Pronoun Ratio:
+									<span class="highlight-stable">↔️ Stable</span> (nan)
+								</li>
+							</ul>
+							<p class="mt-4 italic text-gray-600">
+								A strong shift towards first-person narration is observed,
+								suggesting more personal, subjective, and direct storytelling
+								over time.
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Slide 7: Cultural Indicator Words Analysis Visual -->
+				<div id="slide-7" class="slide-item">
+					<div
+						class="slide-content flex flex-col items-center justify-center w-full"
+					>
+						<p class="mb-6 text-center text-xl font-medium">
+							Tracking the density of specific cultural indicator words reveals
+							evolving societal discourse and concerns.
+						</p>
+						<!-- Image src updated to use getImageUrl function -->
+						<img
+							src=""
+							alt="Cultural Indicator Words Trends Over Time"
+							class="slide-image"
+							data-image-path="./visualization_output/cultural_words_trends.png"
+						/>
+						<div class="text-left mt-8 w-full max-w-lg mx-auto text-base">
+							<h4 class="font-semibold text-indigo-600 mb-2">
+								Key Cultural Word Trends (Correlation with Year):
+							</h4>
+							<ul class="list-disc list-inside grid grid-cols-2 gap-y-1">
+								<li>
+									'seldom':
+									<span class="highlight-negative">↘️ Declining</span> (-0.854)
+								</li>
+								<li>
+									'negro':
+									<span class="highlight-stable">↔️ Stable</span> (-0.052)
+								</li>
+								<li>
+									'nigger':
+									<span class="highlight-stable">↔️ Stable</span> (-0.052)
+								</li>
+								<li>
+									'black':
+									<span class="highlight-positive">↗️ Rising</span> (0.739)
+								</li>
+								<li>
+									'white':
+									<span class="highlight-stable">↔️ Stable</span> (0.025)
+								</li>
+								<li>
+									'feminist':
+									<span class="highlight-positive">↗️ Rising</span> (0.663)
+								</li>
+								<li>
+									'gender':
+									<span class="highlight-positive">↗️ Rising</span> (0.663)
+								</li>
+								<li>
+									'slave':
+									<span class="highlight-positive">↗️ Rising</span> (0.444)
+								</li>
+								<li>
+									'master':
+									<span class="highlight-negative">↘️ Declining</span> (-0.121)
+								</li>
+								<li>
+									'control':
+									<span class="highlight-negative">↘️ Declining</span> (-0.389)
+								</li>
+								<li>
+									'anger':
+									<span class="highlight-positive">↗️ Rising</span> (0.575)
+								</li>
+								<li>
+									'fear':
+									<span class="highlight-positive">↗️ Rising</span> (0.102)
+								</li>
+								<li>
+									'you': <span class="highlight-stable">↔️ Stable</span> (nan)
+								</li>
+								<li>
+									'i': <span class="highlight-stable">↔️ Stable</span> (nan)
+								</li>
+								<li>
+									'culture':
+									<span class="highlight-positive">↗️ Rising</span> (0.881)
+								</li>
+								<li>
+									'change':
+									<span class="highlight-stable">↔️ Stable</span> (0.060)
+								</li>
+								<li>
+									'society':
+									<span class="highlight-positive">↗️ Rising</span> (0.541)
+								</li>
+								<li>
+									'freedom':
+									<span class="highlight-negative">↘️ Declining</span> (-0.692)
+								</li>
+								<li>
+									'colonial':
+									<span class="highlight-positive">↗️ Rising</span> (0.346)
+								</li>
+								<li>
+									'truth':
+									<span class="highlight-negative">↘️ Declining</span> (-0.115)
+								</li>
+							</ul>
+							<p class="mt-4 italic text-gray-600">
+								The nuanced usage of terms like 'black' and 'feminist'
+								highlights shifts in social identity and discourse, moving
+								towards more direct and critical engagement.
+							</p>
+						</div>
+					</div>
+				</div>
+
+				<!-- Slide 8: Conclusion -->
+				<div id="slide-8" class="slide-item">
+					<div class="slide-content text-center max-w-2xl">
+						<h2 class="text-5xl font-extrabold text-teal-600 mb-8">
+							Conclusion
+						</h2>
+						<p class="mb-4 text-xl">
+							This linguistic journey through literary works demonstrates
+							profound shifts in how language reflects evolving societal
+							concerns.
+						</p>
+						<p class="mb-6 text-xl">
+							From formal, internal narratives to direct, personal, and activist
+							voices, literature increasingly mirrors and shapes cultural
+							transformation.
+						</p>
+						<p class="font-bold text-indigo-500 text-3xl mt-10 tracking-wide">
+							Thank You for Your Attention
+						</p>
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<!-- Footer: Clean and subtle -->
+		<footer
+			class="p-4 bg-white text-gray-600 text-center text-sm shadow-inner mt-auto"
+		>
+			&copy; 2024 Linguistic Analysis Project
+		</footer>
+
+		<script>
+			let currentSlideIndex = 0;
+			const totalSlides = 9; // Total number of slides (0-indexed)
+
+			// Function to get image URL for the current environment
+			function getImageUrl(imgName) {
+				// Check if running in a sandbox environment where __file_urls__ is defined
+				// This is how the Google Gemini environment serves uploaded files.
+				if (typeof __file_urls__ !== "undefined" && __file_urls__[imgName]) {
+					return __file_urls__[imgName];
+				}
+				// If not in the sandbox, assume it's a local file path.
+				// The `imgName` variable already contains the correct relative path like "./visualization_output/image.png"
+				return imgName;
+			}
+
+			function updateSlide() {
+				// Get all slide elements
+				const slides = document.querySelectorAll(".slide-item");
+
+				// Update classes for transitions
+				slides.forEach((slide, index) => {
+					if (index === currentSlideIndex) {
+						slide.classList.add("active");
+						slide.classList.remove("previous");
+					} else if (index < currentSlideIndex) {
+						slide.classList.remove("active");
+						slide.classList.add("previous");
+					} else {
+						slide.classList.remove("active", "previous");
+					}
+				});
+
+				// Slide data with titles and image paths
+				const slideData = [
+					{ id: "slide-0", title: "Literary Evolution: A Linguistic Journey" },
+					{ id: "slide-1", title: "Corpus Overview" },
+					{ id: "slide-2", title: "Key Evolutionary Trends" },
+					{
+						id: "slide-3",
+						title: "Semantic Field Evolution",
+						actualImage: "./visualization_output/semantic_field_trends.png",
+					},
+					{
+						id: "slide-4",
+						title: "Part-of-Speech Evolution",
+						actualImage: "./visualization_output/pos_tag_trends.png",
+					},
+					{
+						id: "slide-5",
+						title: "Readability & Emotional Evolution",
+						actualImage:
+							"./visualization_output/complexity_sentiment_trends.png",
+					},
+					{
+						id: "slide-6",
+						title: "Grammatical Structure & Narrative Voice",
+						actualImage: "./visualization_output/comparative_analysis.png",
+					},
+					{
+						id: "slide-7",
+						title: "Cultural Indicator Words Analysis",
+						actualImage: "./visualization_output/cultural_words_trends.png",
+					},
+					{ id: "slide-8", title: "Conclusion" },
+				];
+
+				const currentSlideElement = document.getElementById(
+					`slide-${currentSlideIndex}`
+				);
+				const slideInfo = slideData[currentSlideIndex];
+
+				// Update header title
+				document.getElementById("slide-title").textContent = slideInfo.title;
+
+				// Handle image source for slides that have images
+				// Use data-image-path to store the original path, and set src dynamically
+				const slideImage = currentSlideElement.querySelector(".slide-image");
+				if (slideImage && slideInfo.actualImage) {
+					slideImage.src = getImageUrl(slideInfo.actualImage);
+					// Fallback for image loading errors
+					slideImage.onerror = function () {
+						this.onerror = null; // Prevent infinite loop on error
+						// Extract a friendly name for the placeholder text
+						const imgNamePart =
+							slideInfo.actualImage
+								.split("/")
+								.pop()
+								.split(".")[0]
+								.replace(/_/g, " ") + " Chart";
+						this.src = `https://placehold.co/1200x600/e2e8f0/2d3748?text=${encodeURIComponent(
+							imgNamePart + " Not Found"
+						)}`;
+					};
+				}
+
+				// Update navigation button states
+				document.getElementById("prev-slide-btn").disabled =
+					currentSlideIndex === 0;
+				document.getElementById("next-slide-btn").disabled =
+					currentSlideIndex === totalSlides - 1;
+				document.getElementById("slide-counter").textContent = `Slide ${
+					currentSlideIndex + 1
+				} of ${totalSlides}`;
+			}
+
+			// Event Listeners for navigation buttons
+			document.addEventListener("DOMContentLoaded", () => {
+				updateSlide(); // Initial slide load
+
+				document
+					.getElementById("next-slide-btn")
+					.addEventListener("click", () => {
+						if (currentSlideIndex < totalSlides - 1) {
+							currentSlideIndex++;
+							updateSlide();
+						}
+					});
+
+				document
+					.getElementById("prev-slide-btn")
+					.addEventListener("click", () => {
+						if (currentSlideIndex > 0) {
+							currentSlideIndex--;
+							updateSlide();
+						}
+					});
+			});
+		</script>
+	</body>
+</html>
